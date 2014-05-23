@@ -38,7 +38,7 @@ fi
 if [ -f libdiscmage/discmage$LIBSUFFIX ]; then
 cp libdiscmage/discmage$LIBSUFFIX /usr/lib
 elif [ -f discmage$LIBSUFFIX ]; then
-cp discmage$LIBSUFFIX /us/lib
+cp discmage$LIBSUFFIX /usr/lib
 fi
 echo "Be sure to check $HOME/.ucon64rc for some options after"
 echo "you've run uCON64 once."
