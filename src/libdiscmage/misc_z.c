@@ -73,15 +73,15 @@ q_fsize (const char *filename)
         }
 #if 1
       // This is not much faster than the other method
-      while (!gzeof (file))
-        gzseek (file, 1024 * 1024, SEEK_CUR);
-      size = gztell (file);
+      while (!gzeof ((gzFile) file))
+        gzseek ((gzFile) file, 1024 * 1024, SEEK_CUR);
+      size = gztell ((gzFile) file);
 #else
       // Is there a more efficient way to determine the uncompressed size?
-      while ((bytesread = gzread (file, buf, MAXBUFSIZE)) > 0)
+      while ((bytesread = gzread ((gzFile) file, buf, MAXBUFSIZE)) > 0)
         size += bytesread;
 #endif
-      gzclose (file);
+      gzclose ((gzFile) file);
       return size;
     }
   else if (magic[0] == 'P' && magic[1] == 'K' && magic[2] == 0x03 && magic[3] == 0x04)
@@ -373,7 +373,7 @@ fclose2 (FILE *file)
   if (fmode == FM_NORMAL)
     return fclose (file);
   else if (fmode == FM_GZIP)
-    return gzclose (file);
+    return gzclose ((gzFile) file);
   else if (fmode == FM_ZIP)
     {
       unzCloseCurrentFile (file);
@@ -405,12 +405,12 @@ fseek2 (FILE *file, long offset, int mode)
       if (mode == SEEK_END)                     // zlib doesn't support SEEK_END
         {
           // Note that this is _slow_...
-          while (!gzeof (file))
+          while (!gzeof ((gzFile) file))
             {
-              gzgetc (file); // necessary for _uncompressed_ files in order to set EOF
-              gzseek (file, 1024 * 1024, SEEK_CUR);
+              gzgetc ((gzFile) file); // necessary for _uncompressed_ files in order to set EOF
+              gzseek ((gzFile) file, 1024 * 1024, SEEK_CUR);
             }
-          offset += gztell (file);
+          offset += gztell ((gzFile) file);
           mode = SEEK_SET;
         }
       /*
@@ -422,8 +422,8 @@ fseek2 (FILE *file, long offset, int mode)
         DJGPP, Cygwin & GNU/Linux). It clears the EOF indicator.
       */
       if (!finfo->compressed)
-        gzrewind (file);
-      return gzseek (file, offset, mode) == -1 ? -1 : 0;
+        gzrewind ((gzFile) file);
+      return gzseek ((gzFile) file, offset, mode) == -1 ? -1 : 0;
     }
   else if (finfo->fmode == FM_ZIP)
     {
@@ -465,7 +465,7 @@ fread2 (void *buffer, size_t size, size_t number, FILE *file)
     return fread (buffer, size, number, file);
   else if (fmode == FM_GZIP)
     {
-      int n = gzread (file, buffer, number * size);
+      int n = gzread ((gzFile) file, buffer, number * size);
       return n / size;
     }
   else if (fmode == FM_ZIP)
@@ -487,7 +487,7 @@ fgetc2 (FILE *file)
   if (fmode == FM_NORMAL)
     return fgetc (file);
   else if (fmode == FM_GZIP)
-    return gzgetc (file);
+    return gzgetc ((gzFile) file);
   else if (fmode == FM_ZIP)
     {
       char c;
@@ -510,7 +510,7 @@ fgets2 (char *buffer, int maxlength, FILE *file)
     return fgets (buffer, maxlength, file);
   else if (fmode == FM_GZIP)
     {
-      char *retval = gzgets (file, buffer, maxlength);
+      char *retval = gzgets ((gzFile) file, buffer, maxlength);
       return retval == Z_NULL ? NULL : retval;
     }
   else if (fmode == FM_ZIP)
@@ -545,7 +545,7 @@ feof2 (FILE *file)
   if (fmode == FM_NORMAL)
     return feof (file);
   else if (fmode == FM_GZIP)
-    return gzeof (file);
+    return gzeof ((gzFile)file);
   else if (fmode == FM_ZIP)
     return unzeof (file);                       // returns feof() of the "current file"
   else
