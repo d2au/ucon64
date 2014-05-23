@@ -3,7 +3,7 @@
 
 # Make it possible to specify another location (DESTDIR=/usr/bin ./install.sh).
 if [ -z $DESTDIR ]; then
-DESTDIR=/usr/local/bin
+DESTDIR=/usr/bin
 elif [ ! -e $DESTDIR ]; then
 echo "$DESTDIR does not exist, installing to /usr/local/bin"
 DESTDIR=/usr/local/bin
@@ -36,9 +36,9 @@ LIBSUFFIX=.so
 fi
 
 if [ -f libdiscmage/discmage$LIBSUFFIX ]; then
-cp libdiscmage/discmage$LIBSUFFIX $HOME/.ucon64
+cp libdiscmage/discmage$LIBSUFFIX /usr/lib
 elif [ -f discmage$LIBSUFFIX ]; then
-cp discmage$LIBSUFFIX $HOME/.ucon64
+cp discmage$LIBSUFFIX /us/lib
 fi
 echo "Be sure to check $HOME/.ucon64rc for some options after"
 echo "you've run uCON64 once."

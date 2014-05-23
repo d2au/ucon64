@@ -1698,7 +1698,7 @@ ucon64_configfile_create (void)
 #elif   defined __APPLE__                       // Mac OS X actually
         "~/.ucon64/discmage.dylib",
 #elif   defined __unix__ || defined __BEOS__
-        "~/.ucon64/discmage.so",
+        "/usr/lib/discmage.so",
 #else
         "",
 #endif
